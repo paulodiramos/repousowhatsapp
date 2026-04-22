@@ -71,7 +71,13 @@ async function startBot() {
         if (shouldReconnect) {
           setTimeout(startBot, 3000);
         } else {
-          initError = 'Sessao terminada (logout). Apaga a pasta baileys_auth e re-faz scan.';
+          // Logged out — apaga credenciais e recomeca com novo QR
+          console.log('[WA] Logged out. A apagar sessao e a gerar novo QR...');
+          try { fs.rmSync(AUTH_DIR, { recursive: true, force: true }); } catch (e) {}
+          try { fs.mkdirSync(AUTH_DIR, { recursive: true }); } catch (e) {}
+          initError = null;
+          latestQr = null;
+          setTimeout(startBot, 2000);
         }
       }
     });
